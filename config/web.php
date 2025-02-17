@@ -42,14 +42,26 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
+        
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'books' => 'book/all',
+                'book/<id:\d+>' => 'book/detail',
+                'authors' => 'author/all',
+                'author/search/<search:\w+>' => 'author/all',
+                'author/<id:\d+>' => 'author/detail',
             ],
         ],
-        */
+        'view' => [
+            'renderers' => [
+                'tpl' => [
+                    'class' => 'yii\smarty\ViewRenderer',
+                    //'cachePath' => '@runtime/Smarty/cache',
+                ],
+            ],
+        ],
     ],
     'params' => $params,
 ];
