@@ -96,6 +96,9 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public function ofuscatePassword($password)
     {
         if (empty(getenv('salt'))) {
+            var_dump(getenv('salt'));
+            var_dump($_ENV['salt'] ?? 'No está en $_ENV');
+            var_dump($_SERVER['salt'] ?? 'No está en $_SERVER');
             throw new Exception('no salt');
         }
         return md5(sprintf('%s-%s-%s', $password, $this->username, getenv('salt')));

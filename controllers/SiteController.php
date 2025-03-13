@@ -61,7 +61,15 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $smarty = Yii::$app->view->smarty;
+
+        // Registrar la clase HTML en Smarty
+        $smarty->registerClass('HTML', 'yii\helpers\Html');
+
+        // 🔍 Verificar si la clase se registró correctamente
+        var_dump($smarty->registered_classes);
+        
+        return $this->render('index.tpl');
     }
 
     /**
