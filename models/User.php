@@ -3,6 +3,7 @@
 namespace app\models;
 
 use yii\db\ActiveRecord;
+use Exception;
 
 class User extends ActiveRecord implements \yii\web\IdentityInterface
 {
@@ -12,17 +13,22 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public $authKey;
     public $accessToken; */
 
+    public static function tableName()
+    {
+        return 'users';
+    }
+
     /**
      * {@inheritdoc}
      */
     public static function findIdentity($id)
     {
-        // return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
         $user = self::findOne($id);
         if (empty($user)) {
             return null;
         }
         return $user;
+        //return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
     }
 
     /**
@@ -30,13 +36,6 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        /* foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null; */
         $user = self::findOne(['token' => $token]);
         if (empty($user)) {
             return null;
@@ -52,14 +51,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public static function findByUsername($username)
     {
-        /* foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null; */
-        $user = self::findOne(['username' => $username])->one();
+        $user = self::find()->where(['username' => $username])->one();
         if (empty($user)) {
             return null;
         }
@@ -101,7 +93,19 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         return $this->password === $this->ofuscatePassword($password);
     }
 
-    public function ofuscatePassword($password) {
+    public function ofuscatePassword($password)
+    {
+        if (empty(getenv('salt'))) {
+            throw new Exception('no salt');
+        }
         return md5(sprintf('%s-%s-%s', $password, $this->username, getenv('salt')));
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert == true) {
+            $this->password = $this->ofuscatePassword($this->password);
+        }
+        return parent::beforeSave($insert);
     }
 }
