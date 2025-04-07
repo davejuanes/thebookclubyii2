@@ -25,4 +25,24 @@ class BookController extends Controller {
         }
          return $book->toString();
     }
+    public function actionNew() {
+        if (Yii::$app->user->isGuest) {
+            Yii::$app->session->setFlash('warning', 'Debes estar logueado para crear un libro');
+            return $this->goHome();
+        }
+        $book = new Book();
+
+        if ($book->load(Yii::$app->request->post())) {
+            if ($book->validate()) {
+                if ($book->save()) {
+                    Yii::$app->session->setFlash('success', 'El libro se ha creado correctamente');
+                    return $this->redirect(['book/all']);
+                }
+            }
+        }
+
+        return $this->render('form.tpl', [
+            'book' => $book,
+        ]);
+    }
 }

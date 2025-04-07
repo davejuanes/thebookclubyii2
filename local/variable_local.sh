@@ -13,4 +13,4 @@ $env:db_name = "thebookclub"
 $env:db_user = "root"
 $env:db_pass = ""
 $env:db_port = "3306"
-$env:salt = "5HS46PWljkegnyTA5Tv4nf6WJNosGE!M"
+$env:salt = '5HS46PWljkegnyTA5Tv4nf6WJNosGE!M'

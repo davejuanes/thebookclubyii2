@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Book;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -9,7 +10,6 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
-use app\models\Book;
 
 class SiteController extends Controller
 {
@@ -62,7 +62,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index.tpl');
+        $book_count = Book::find()->count();
+        
+        return $this->render('index.tpl',
+            ['book_count' => $book_count]
+        );
     }
 
     /**

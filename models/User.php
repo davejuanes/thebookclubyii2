@@ -14,28 +14,59 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public $authKey;
     public $accessToken; */
 
+    public $password_repeats;
+    public $email;
+
     public static function tableName()
     {
         return 'users';
     }
+
+    public function rules() {
+        return [
+            [['username', 'password'], 'required'],
+            ['username', 'filter', 'filter' => function($v) {
+                $v = ltrim(rtrim($v));
+                $v = strtolower($v);
+                return $v;
+            }],
+            ['username', 'unique'],
+            ['username', 'string', 'length' => [3, 100]],
+            ['password', 'compare', 'compareAttribute' => 'password_repeats'],
+            ['password_repeats', 'default'],
+            [['bio'], 'default'],
+            ['email', 'email'],
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'username' => 'Usuario',
+        ];
+    }
+
+    public function attributeHints()
+    {
+        return [
+            'username' => 'Deberá ser unico en el sistema',
+            'password_repeats' => 'Tiene que ser igual al anterior'
+        ];
+    }
+    /**
+     * {@inheritdoc}
+     */
     public static function findIdentity($id)
     {
-        // return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
         $user = self::findOne($id);
         if (empty($user)) {
             return null;
         }
         return $user;
+        //return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
     }
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        /* foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null; */
         $user = self::findOne(['token' => $token]);
         if (empty($user)) {
             return null;
@@ -44,13 +75,6 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     }
     public static function findByUsername($username)
     {
-        /* foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null; */
         $user = self::find()->where(['username' => $username])->one();
         if (empty($user)) {
             return null;
@@ -76,12 +100,10 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
 
     public function ofuscatePassword($password)
     {
-        $salt = getenv('salt');
-        if (empty($salt)) {
-            Yii::error('Error: La variable salt no está definida.', __METHOD__);
-            throw new Exception('Error: La variable salt no está definida.');
+        if (empty(getenv('salt'))) {
+            throw new Exception('no salt');
         }
-        return md5(sprintf('%s-%s-%s', $password, $this->username, $salt));
+        return md5(sprintf('%s-%s-%s', $password, $this->username, getenv('salt')));
     }
 
     public function beforeSave($insert)
