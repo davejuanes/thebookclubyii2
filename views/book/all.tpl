@@ -1,13 +1,11 @@
 {use class="yii\helpers\Html"}
 
-<h1>Todos los libros
-    {if $title > 2}muchos{else}pocos{/if}
-</h1>
+<h1>todos los libros</h1>
 
 <ol>
-    {foreach $books as $book}
-        <li>{Html::a($book->toString(),
-            ['book/detail', 'id' => $book->id])}
-        </li>
-    {/foreach}
+  {foreach $books as $book}
+  <li>{Html::a($book->toString(),
+    ['book/detail', 'id' => $book->id])}
+  </li>
+  {/foreach}
 </ol>

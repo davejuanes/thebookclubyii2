@@ -7,8 +7,18 @@
 {if Yii::$app->user->isGuest}
 hola invitado, {Html::a('login', ['site/login'])}
 {else}
-hola {Yii::$app->user->identity->username} 👋🏻
+  {assign "user" Yii::$app->user->identity}
+  <p>hola {$user->username} 👋🏻</p>
+  <p>has votado {$user->votesCount} veces y promedio de  {$user->votesAvg}</p>
 {/if}
 
-<p>Hay {$book_count} libros en la base de datos.</p>
-<p>{Html::a('Crear libro', ['book/new'])}</p>
+<p>
+   Hay {Html::a("{$book_count} libros", ['book/all'])} y
+   {Html::a("{$author_count} autores", ['author/all'])}
+   registrados en el sistema.
+ </p>
+ <h3>acciones:</h3>
+ <ul>
+   <li>{Html::a('crear libro', ['book/new'])}</li>
+   <li>{Html::a('agregar autor', ['author/new'])}</li>
+ </ul>

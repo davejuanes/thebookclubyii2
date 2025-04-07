@@ -113,4 +113,38 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         }
         return parent::beforeSave($insert);
     }
+
+    public function hasBook($book_id):bool {
+        $ub = UserBook::find()->where([
+            'user_id' => $this->id,
+            'book_id' => $book_id,
+        ])->all();
+        if (empty($ub)) {
+            return false;
+        }
+        return true;
+    }
+
+    public function getVotes() {
+        return $this->hasMany(BookScore::class, ['user_id' => 'user_id'])->all();
+    }
+
+    public function getVotesCount() {
+        return count($this->votes);
+    }
+
+    public function getVotesAvg() {
+        $i = 0;
+        $sum = 0;
+        foreach ($this->votes as $vote) {
+            $i++;
+            $sum += $vote->score;
+        }
+        
+        if($i == 0) {
+            return "Sin votos";
+        } else {
+            return sprintf("%.2f", $sum/$i);
+        }
+    }
 }

@@ -33,5 +33,4 @@ class UserController extends Controller {
     printf("nel\n");
     return ExitCode::OK;
   }
-
 }
