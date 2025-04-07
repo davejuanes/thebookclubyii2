@@ -10,6 +10,19 @@ class Book extends ActiveRecord {
         return 'books';
     }
 
+    public function attributeLabels() {
+        return [
+            'title' => 'Título',
+        ];
+    }
+
+    public function rules() {
+        return [
+            [['title', 'author_id'], 'required'],
+            ['author_id', 'integer'],
+        ];
+    }
+
     public function getId() {
         return $this->book_id;
     }

@@ -20,4 +20,12 @@ class Author extends ActiveRecord {
     public function getBooks() {
         return $this->hasMany(Book::class, ['author_id' => 'author_id'])->all();
     }
+    public static function getAuthorList() {
+        $authors = self::find()->orderBy('name', 'ASC')->all();
+        $ret = [];
+        foreach ($authors as $author) {
+            $ret[$author->id] = $author->name;
+        }
+        return $ret;
+    }
 }

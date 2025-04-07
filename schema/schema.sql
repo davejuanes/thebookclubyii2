@@ -71,3 +71,12 @@ create table if not exists users (
   modified_at timestamp not null default current_timestamp
   on update current_timestamp
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE if not exists user_books (
+  user_book_id integer unsigned primary key auto_increment,
+  user_id integer not null,
+  book_id integer not null,
+  created_at timestamp not null default current_timestamp,
+	modified_at timestamp not null default current_timestamp on update current_timestamp,
+	unique key no_rep(user_id, book_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

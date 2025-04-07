@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Book;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -61,15 +62,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $smarty = Yii::$app->view->smarty;
-
-        // Registrar la clase HTML en Smarty
-        $smarty->registerClass('HTML', 'yii\helpers\Html');
-
-        // 🔍 Verificar si la clase se registró correctamente
-        var_dump($smarty->registered_classes);
+        $book_count = Book::find()->count();
         
-        return $this->render('index.tpl');
+        return $this->render('index.tpl',
+            ['book_count' => $book_count]
+        );
     }
 
     /**

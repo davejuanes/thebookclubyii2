@@ -13,11 +13,45 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public $authKey;
     public $accessToken; */
 
+    public $password_repeats;
+    public $email;
+
     public static function tableName()
     {
         return 'users';
     }
 
+    public function rules() {
+        return [
+            [['username', 'password'], 'required'],
+            ['username', 'filter', 'filter' => function($v) {
+                $v = ltrim(rtrim($v));
+                $v = strtolower($v);
+                return $v;
+            }],
+            ['username', 'unique'],
+            ['username', 'string', 'length' => [3, 100]],
+            ['password', 'compare', 'compareAttribute' => 'password_repeats'],
+            ['password_repeats', 'default'],
+            [['bio'], 'default'],
+            ['email', 'email'],
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'username' => 'Usuario',
+        ];
+    }
+
+    public function attributeHints()
+    {
+        return [
+            'username' => 'Deberá ser unico en el sistema',
+            'password_repeats' => 'Tiene que ser igual al anterior'
+        ];
+    }
     /**
      * {@inheritdoc}
      */
@@ -96,9 +130,6 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public function ofuscatePassword($password)
     {
         if (empty(getenv('salt'))) {
-            var_dump(getenv('salt'));
-            var_dump($_ENV['salt'] ?? 'No está en $_ENV');
-            var_dump($_SERVER['salt'] ?? 'No está en $_SERVER');
             throw new Exception('no salt');
         }
         return md5(sprintf('%s-%s-%s', $password, $this->username, getenv('salt')));
